@@ -31,6 +31,9 @@ const userModel = mongoose.Schema({
     isVerified: {
         type: Number
     },
+    rewardMoney: {
+        type: Number
+    },
     points: [
         {}
     ],

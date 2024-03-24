@@ -160,9 +160,34 @@ exports.updateUserDetail = async (req, res) => {
         const user = await userModel.find({ _id: req.user.id });
 
         if (!user) return res.status(404).json({ message: 'user does not exist' });
+
+        const file = req.f;
         const update = await userModel.findByIdAndUpdate(user._id, req.body, { new: true });
 
 
+    } catch (error) {
+        res.status(500).json({
+            status: 'Fail',
+            message: error.message
+        });
+    }
+};
+
+exports.rewardUserMoney = async (req, res) => {
+    try {
+        const id = req.params.userId;
+        const { rewardMoney } = req.body;
+
+        const user = await userModel.findById(id);
+        if (!user) return res.status(404).json({ message: 'user does not exist' });
+
+        user.rewardMoney += rewardMoney;
+        user.save;
+
+        res.status(200).json({
+            status: 'Success',
+            message: `Reward of ${rewardMoney} was awrded to ${user.userName}`
+        });
     } catch (error) {
         res.status(500).json({
             status: 'Fail',
