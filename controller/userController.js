@@ -176,8 +176,11 @@ exports.updateUserDetail = async (req, res) => {
 exports.rewardUserMoney = async (req, res) => {
     try {
         const id = req.params.userId;
+        const adminId = req.params.id;
         const { rewardMoney } = req.body;
 
+        const admin = await userModel.find({ _id: adminId });
+        if (!admin.isAdmin) return res.status(403).json({ message: 'You can not perform this action' });
         const user = await userModel.findById(id);
         if (!user) return res.status(404).json({ message: 'user does not exist' });
 
