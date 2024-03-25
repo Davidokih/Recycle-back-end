@@ -12,7 +12,18 @@ const pickUpModel = mongoose.Schema({
         type: String
     },
     pickupTime: {
-        type: Strin
+        type: String
+    },
+    status: {
+        type: String
+    },
+    notifyAdmin: {
+        type: Boolean,
+        default: true
+    },
+    notifyUser: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
 

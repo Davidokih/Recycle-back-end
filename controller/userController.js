@@ -1,9 +1,19 @@
 const userModel = require('../model/userModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 
+const transport = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // use SSL
+    auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASS
+    }
+});
 const generateOTP = () => {
     const numericValues = '0123456789';
     let code = '';
@@ -12,9 +22,17 @@ const generateOTP = () => {
     }
     return code;
 };
+const generateID = () => {
+    const numericValues = '0123456789';
+    let code = '';
+    for (i = 0; i < 4; i++) {
+        code += numericValues[ Math.floor(Math.random() * 10) ];
+    }
+    return code;
+};
 exports.signupUser = async (req, res) => {
     try {
-        const { userName, password, email } = req.body;
+        const { userName, phoneNo, password, email } = req.body;
 
         if (!userName || !password || !email) {
             res.status(403).json({
@@ -24,15 +42,42 @@ exports.signupUser = async (req, res) => {
 
         const salt = await bcrypt.genSalt(process.env.SALT);
         const hashed = await bcrypt.hash(password, salt);
+        const OTP = generateOTP();
 
         const createUser = await userModel({
             userName,
             email,
+            phoneNo,
             password: hashed,
-            otp: generateOTP()
+            otp: OTP,
+            userID: generateID()
         });
 
         await createUser.save();
+
+        const file = path.join(__dirname, "../views/index.ejs");
+
+        ejs.renderFile(file, { name: createUser.userName, otp: OTP }, (err, data) => {
+            if (err) {
+                console.log(err);
+            } else {
+                const mailOption = {
+                    from: "Recykie",
+                    to: email,
+                    subject: "Account verification",
+                    html: `${userCreate._id} and ${userCreate.verified}`
+                };
+
+                transport.sendMail(mailOption, (err, info) => {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log("mail sent", info.response);
+                    }
+                });
+            }
+        });
+
         res.status(201).json({
             status: 'Successs',
             message: 'Check Your email to verify your account'

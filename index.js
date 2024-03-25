@@ -4,6 +4,7 @@ require('./config/db');
 require('dotenv').config();
 
 const userRouter = require('./Router/userRouter');
+const pickupRouter = require('./Router/pickupRouter');
 
 const app = express();
 const port = process.env.PORT || 1111;
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/user', userRouter);
+app.use('/api/pickup', pickupRouter);
 
 app.listen(port, () => {
     console.log('listening to port: ' + port);

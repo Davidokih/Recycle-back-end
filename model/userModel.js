@@ -34,10 +34,7 @@ const userModel = mongoose.Schema({
     rewardMoney: {
         type: Number
     },
-    points: [
-        {}
-    ],
-    pickups: [
+    pickup: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'pickups'
