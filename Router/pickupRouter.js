@@ -5,7 +5,7 @@ const auth = require('../utils/auth');
 const router = express.Router();
 
 router.route('/').get(getRequest);
-router.route('/crreate').post(auth, createPickupRequest);
+router.route('/create').post(auth, createPickupRequest);
 router.route('/:pickupId').get(getPickuptDetail);
 router.route('/update/:pickupId').patch(updatePickupRequest);
 router.route('/delete/:pickupId').delete(deletePickupRequest);

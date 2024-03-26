@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+const path = require('path');
+const ejs = require('ejs');
 
 
 const transport = nodemailer.createTransport({
@@ -40,7 +42,7 @@ exports.signupUser = async (req, res) => {
             });
         }
 
-        const salt = await bcrypt.genSalt(process.env.SALT);
+        const salt = await bcrypt.genSalt(10);
         const hashed = await bcrypt.hash(password, salt);
         const OTP = generateOTP();
 
@@ -57,24 +59,19 @@ exports.signupUser = async (req, res) => {
 
         const file = path.join(__dirname, "../views/index.ejs");
 
-        ejs.renderFile(file, { name: createUser.userName, otp: OTP }, (err, data) => {
+        const ejsXml = await ejs.renderFile(file, { name: createUser.userName, otp: OTP });
+        const mailOption = {
+            from: "Recykie",
+            to: email,
+            subject: "Account verification",
+            html: ejsXml
+        };
+
+        transport.sendMail(mailOption, (err, info) => {
             if (err) {
                 console.log(err);
             } else {
-                const mailOption = {
-                    from: "Recykie",
-                    to: email,
-                    subject: "Account verification",
-                    html: `${userCreate._id} and ${userCreate.verified}`
-                };
-
-                transport.sendMail(mailOption, (err, info) => {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        console.log("mail sent", info.response);
-                    }
-                });
+                console.log("mail sent", info.response);
             }
         });
 
@@ -87,6 +84,7 @@ exports.signupUser = async (req, res) => {
             status: 'Fail',
             message: error.message
         });
+        console.log(error);
     }
 };
 
@@ -102,7 +100,7 @@ exports.verifyUser = async (req, res) => {
             });
         }
 
-        await userModel.findByIdAndUpdate(id, { otp: '' }, { new: true });
+        await userModel.findByIdAndUpdate(id, { otp: '', isVerified: true }, { new: true });
         res.status(200).json({
             status: 'Success',
             message: 'user is now verified, proceed to signin'
@@ -120,25 +118,27 @@ exports.signinUser = async (req, res) => {
         const { email, password } = req.body;
         if (!email && password) return res.status(403).json({ message: 'user email and password must be added' });
 
-        const getUser = await userModel.find({ email });
-        if (!getUser) return res.status(404).json({ message: 'users does not exist' });
+        const getUser = await userModel.findOne({ email });
+        if (!getUser) return res.status(404).json({ message: 'user does not exist' });
+        if (getUser.isVerified === false) return res.status(404).json({ message: 'user is not verified' });
 
         const comparePassword = await bcrypt.compare(password, getUser.password);
         if (!comparePassword) return res.status(400).json({ message: 'Wrong Password' });
 
-        const logInUser = await jwt.sign({ id: getUser._id }, process.env.JWT_SECRET, { expiresIn: process.env.EXPIRING_DATE });
+        const logInUserToken = await jwt.sign({ id: getUser._id }, process.env.JWT_SECRET, { expiresIn: process.env.EXPIRING_DATE });
 
         const { userName, ...info } = getUser._doc;
 
         res.status(200).json({
             status: 'Success',
-            data: { logInUser, ...info }
+            data: { logInUserToken, userName }
         });
     } catch (error) {
         res.status(500).json({
             status: 'Fail',
             message: error.message
         });
+        console.log(error);
     }
 };
 
@@ -206,7 +206,7 @@ exports.updateUserDetail = async (req, res) => {
 
         if (!user) return res.status(404).json({ message: 'user does not exist' });
 
-        const file = req.f;
+        // const file = req.f;
         const update = await userModel.findByIdAndUpdate(user._id, req.body, { new: true });
 
 
@@ -221,7 +221,7 @@ exports.updateUserDetail = async (req, res) => {
 exports.rewardUserMoney = async (req, res) => {
     try {
         const id = req.params.userId;
-        const adminId = req.params.id;
+        const adminId = req.user.id;
         const { rewardMoney } = req.body;
 
         const admin = await userModel.find({ _id: adminId });

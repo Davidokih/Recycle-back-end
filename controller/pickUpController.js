@@ -1,4 +1,4 @@
-const userModel = require('../model/pickUpModel');
+const userModel = require('../model/userModel');
 const pickUpModel = require('../model/pickUpModel');
 const mongoose = require('mongoose');
 
@@ -19,7 +19,7 @@ exports.createPickupRequest = async (req, res) => {
         create.user = user;
         create.save();
 
-        user.pickup.push(mongoose.Types.ObjectId(create._id));
+        user.pickup.push(new mongoose.Types.ObjectId(create._id));
         user.save();
 
         res.status(201).json({

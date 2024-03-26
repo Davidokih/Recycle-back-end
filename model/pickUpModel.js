@@ -15,7 +15,8 @@ const pickUpModel = mongoose.Schema({
         type: String
     },
     status: {
-        type: String
+        type: String,
+        default: "pending"
     },
     notifyAdmin: {
         type: Boolean,

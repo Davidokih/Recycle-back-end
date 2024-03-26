@@ -20,16 +20,17 @@ const userModel = mongoose.Schema({
         type: String
     },
     userID: {
-        type: Number
+        type: String
     },
     isAdmin: {
-        type: Boolean
+        type: Boolean,
+        default: false
     },
     otp: {
         type: String
     },
     isVerified: {
-        type: Number
+        type: Boolean
     },
     rewardMoney: {
         type: Number
