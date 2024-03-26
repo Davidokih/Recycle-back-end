@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const DATABASE_URL = process.env.LOCAL_URL;
+const DATABASE_URL = process.env.LIVE_URL;
 
 mongoose.connect(DATABASE_URL).then(() => {
     console.log('Database connected to server');

@@ -77,7 +77,8 @@ exports.signupUser = async (req, res) => {
 
         res.status(201).json({
             status: 'Successs',
-            message: 'Check Your email to verify your account'
+            message: 'Check Your email to verify your account',
+            data: createUser._id
         });
     } catch (error) {
         res.status(500).json({
