@@ -33,7 +33,7 @@ const userModel = mongoose.Schema({
         type: Boolean
     },
     rewardMoney: {
-        type: Number
+        type: Number,
         default: 0
     },
     pickup: [
