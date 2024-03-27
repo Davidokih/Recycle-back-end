@@ -165,7 +165,7 @@ exports.logedInUserDetail = async (req, res) => {
     try {
         const id = req.user.id;
 
-        const userDetail = await userModel.findById(id);
+        const userDetail = await userModel.findById(id).populate('pickup').sort({ createdAt: 'desc' });
         if (!userDetail) return res.status(404).json({ message: 'user does not exist' });
 
         res.status(200).json({
@@ -184,7 +184,7 @@ exports.getAUserDetail = async (req, res) => {
     try {
         const id = req.params.userId;
 
-        const userDetail = await userModel.findById(id);
+        const userDetail = await userModel.findById(id).populate('pickup').sort({ createdAt: 'desc' });
 
         if (!userDetail) return res.status(404).json({ message: 'user does not exist' });
 
