@@ -34,6 +34,7 @@ const userModel = mongoose.Schema({
     },
     rewardMoney: {
         type: Number
+        default: 0
     },
     pickup: [
         {
