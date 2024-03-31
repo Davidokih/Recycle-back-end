@@ -7,13 +7,13 @@ exports.createPickupRequest = async (req, res) => {
         const id = req.user.id;
         const user = await userModel.findById(id);
 
-        const { pickupType, pickupDate, pickupTime } = req.body;
+        const { pickupType, pickupDate } = req.body;
         if (!user) return res.status(404).json({ message: 'user does not exist' });
 
         const create = new pickUpModel({
             pickupType,
             pickupDate,
-            pickupTime
+            pickupTime: '9:00pm'
         });
 
         create.user = user;
