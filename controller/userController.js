@@ -223,7 +223,7 @@ exports.updateUserDetail = async (req, res) => {
 exports.rewardUserMoney = async (req, res) => {
     try {
         const id = req.params.userId;
-        const adminId = req.user.id;
+        // const adminId = req.user.id;
         const { rewardMoney } = req.body;
 
         // const admin = await userModel.find({ _id: adminId });
