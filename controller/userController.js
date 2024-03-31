@@ -232,7 +232,7 @@ exports.rewardUserMoney = async (req, res) => {
         if (!user) return res.status(404).json({ message: 'user does not exist' });
 
         user.rewardMoney += rewardMoney;
-        user.save;
+        user.save();
 
         res.status(200).json({
             status: 'Success',
