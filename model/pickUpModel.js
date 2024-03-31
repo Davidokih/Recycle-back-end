@@ -14,6 +14,9 @@ const pickUpModel = mongoose.Schema({
     pickupTime: {
         type: String
     },
+    address: {
+        type: String
+    },
     status: {
         type: String,
         default: "pending"
