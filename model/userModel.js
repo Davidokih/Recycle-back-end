@@ -9,6 +9,9 @@ const userModel = mongoose.Schema({
         type: String,
         required: true
     },
+    address: {
+        type: String
+    },
     phoneNo: {
         type: String
     },

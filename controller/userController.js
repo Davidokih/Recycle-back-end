@@ -34,7 +34,7 @@ const generateID = () => {
 };
 exports.signupUser = async (req, res) => {
     try {
-        const { userName, phoneNo, password, email } = req.body;
+        const { userName, phoneNo, password, email,address } = req.body;
 
         if (!userName || !password || !email) {
             res.status(403).json({
@@ -49,6 +49,7 @@ exports.signupUser = async (req, res) => {
         const createUser = await userModel({
             userName,
             email,
+            address,
             phoneNo,
             password: hashed,
             otp: OTP,
