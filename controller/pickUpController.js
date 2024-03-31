@@ -55,7 +55,7 @@ exports.getPickuptDetail = async (req, res) => {
     try {
         const id = req.params.pickupId;
 
-        const pickup = await pickUpModel.findById(id);
+        const pickup = await pickUpModel.findById(id)populate('user');
 
         if (!pickup) return res.status(404).json({ message: 'Pickup Request Does not exist' });
 

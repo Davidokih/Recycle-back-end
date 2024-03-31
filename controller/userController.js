@@ -34,7 +34,7 @@ const generateID = () => {
 };
 exports.signupUser = async (req, res) => {
     try {
-        const { userName, phoneNo, password, email,address } = req.body;
+        const { userName, phoneNo, password, email, address } = req.body;
 
         if (!userName || !password || !email) {
             res.status(403).json({
@@ -226,8 +226,8 @@ exports.rewardUserMoney = async (req, res) => {
         const adminId = req.user.id;
         const { rewardMoney } = req.body;
 
-        const admin = await userModel.find({ _id: adminId });
-        if (!admin.isAdmin) return res.status(403).json({ message: 'You can not perform this action' });
+        // const admin = await userModel.find({ _id: adminId });
+        // if (!admin.isAdmin) return res.status(403).json({ message: 'You can not perform this action' });
         const user = await userModel.findById(id);
         if (!user) return res.status(404).json({ message: 'user does not exist' });
 
