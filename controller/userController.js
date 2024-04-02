@@ -32,6 +32,64 @@ const generateID = () => {
     }
     return code;
 };
+exports.signupAdmin = async (req, res) => {
+    try {
+        const { userName, phoneNo, password, email, address } = req.body;
+
+        if (!userName || !password || !email) {
+            res.status(403).json({
+                message: 'User credentials required'
+            });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashed = await bcrypt.hash(password, salt);
+        const OTP = generateOTP();
+
+        const createUser = await userModel({
+            userName,
+            email,
+            address,
+            phoneNo,
+            password: hashed,
+            otp: OTP,
+            isAdmin: true,
+            userID: generateID()
+        });
+
+        await createUser.save();
+
+        const file = path.join(__dirname, "../views/index.ejs");
+
+        const ejsXml = await ejs.renderFile(file, { name: createUser.userName, otp: OTP });
+        const mailOption = {
+            from: "Recykie",
+            to: email,
+            subject: "Account verification",
+            html: ejsXml
+        };
+
+        transport.sendMail(mailOption, (err, info) => {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log("mail sent", info.response);
+            }
+        });
+
+        res.status(201).json({
+            status: 'Successs',
+            message: 'Check Your email to verify your account',
+            data: createUser._id
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: 'Fail',
+            message: error.message
+        });
+        console.log(error);
+    }
+};
 exports.signupUser = async (req, res) => {
     try {
         const { userName, phoneNo, password, email, address } = req.body;
@@ -223,11 +281,11 @@ exports.updateUserDetail = async (req, res) => {
 exports.rewardUserMoney = async (req, res) => {
     try {
         const id = req.params.userId;
-        // const adminId = req.user.id;
+        const adminId = req.user.id;
         const { rewardMoney } = req.body;
 
-        // const admin = await userModel.find({ _id: adminId });
-        // if (!admin.isAdmin) return res.status(403).json({ message: 'You can not perform this action' });
+        const admin = await userModel.find({ _id: adminId });
+        if (!admin.isAdmin) return res.status(403).json({ message: 'You can not perform this action' });
         const user = await userModel.findById(id);
         if (!user) return res.status(404).json({ message: 'user does not exist' });
 
