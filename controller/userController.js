@@ -185,7 +185,7 @@ exports.signinUser = async (req, res) => {
         const comparePassword = await bcrypt.compare(password, getUser.password);
         if (!comparePassword) return res.status(400).json({ message: 'Wrong Password' });
 
-        const logInUserToken = await jwt.sign({ id: getUser._id }, process.env.JWT_SECRET, { expiresIn: process.env.EXPIRING_DATE });
+        const logInUserToken = jwt.verify({ id: getUser._id }, process.env.JWT_SECRET, { expiresIn: process.env.EXPIRING_DATE });
 
         const { userName, ...info } = getUser._doc;
 
