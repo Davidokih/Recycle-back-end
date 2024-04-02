@@ -187,11 +187,11 @@ exports.signinUser = async (req, res) => {
 
         const logInUserToken = jwt.sign({ id: getUser._id }, process.env.JWT_SECRET, { expiresIn: process.env.EXPIRING_DATE });
 
-        const { userName, ...info } = getUser._doc;
+        const { userName, isAdmin, ...info } = getUser._doc;
 
         res.status(200).json({
             status: 'Success',
-            data: { logInUserToken, userName }
+            data: { logInUserToken, userName, isAdmin }
         });
     } catch (error) {
         res.status(500).json({
