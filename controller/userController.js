@@ -263,12 +263,12 @@ exports.getAUserDetail = async (req, res) => {
 
 exports.updateUserDetail = async (req, res) => {
     try {
-        const user = await userModel.find({ _id: req.user.id });
+        const user = await userModel.findById(req.user.id);
 
         if (!user) return res.status(404).json({ message: 'user does not exist' });
 
         // const file = req.f;
-        const update = await userModel.findByIdAndUpdate(user._id, req.body, { new: true });
+        const update = await userModel.findByIdAndUpdate(user._id, req.body, { new: true });;
 
         res.status(200).json({
             status: 'Success',
