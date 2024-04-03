@@ -270,7 +270,10 @@ exports.updateUserDetail = async (req, res) => {
         // const file = req.f;
         const update = await userModel.findByIdAndUpdate(user._id, req.body, { new: true });
 
-
+        res.status(200).json({
+            status: 'Success',
+            data: update
+        });
     } catch (error) {
         res.status(500).json({
             status: 'Fail',
