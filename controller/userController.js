@@ -236,6 +236,7 @@ exports.logedInUserDetail = async (req, res) => {
             status: 'Fail',
             message: error.message
         });
+        console.log(error);
     }
 };
 

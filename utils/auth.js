@@ -12,7 +12,7 @@ module.exports = async (req, res, next) => {
             return res;
         });
 
-        if (user == 'expired token') return res.json({ status: 'Error', data: 'expired token' });
+        if (payload == 'expired token') return res.json({ status: 'Error', data: 'expired token' });
 
         req.user = payload;
 
